@@ -1,0 +1,33 @@
+name: Binance P2P Scraper
+
+on:
+  schedule:
+    - cron: '0 * * * *'  # Runs every hour
+
+jobs:
+  scrape_and_save:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Install dependencies
+      run: pip install selenium webdriver-manager pandas
+
+    - name: Run Scraper
+      run: python scraper.py
+
+    - name: Commit and Push CSV
+      run: |
+        git config --global user.email "github-actions@github.com"
+        git config --global user.name "GitHub Actions"
+        git add binance_p2p_prices.csv
+        git commit -m "Update Binance P2P prices"
+        git push
+      continue-on-error: true
